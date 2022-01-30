@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken');
+const secret=require('../config.json')
 
 //signup
 exports.saveUser = async (req, res, next) => {
@@ -34,7 +35,7 @@ exports.saveUser = async (req, res, next) => {
       password: passwordHash,
     })
     await user.save()
-    const token = jwt.sign({ sub: user._id, username: user.username }, "marufsecret");
+    const token = jwt.sign({ sub: user._id, username: user.username },secret.SECRET);
     res.json({
       token
     });
@@ -56,19 +57,20 @@ exports.loginUser = async (req, res, next) => {
       username: username,
     });
     if (!user) {
-      return res.status(400).json("No account with this user-name exist");
+      // return res.status(400).json({message:"No account with this user-name exist"});
+      throw new Error("No account with this user-name exist")
     }
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
       return res.status(400).json("Invalid credential.");
     }
-    const token = jwt.sign({ sub: user._id, username: user.username }, "marufsecret");
+    const token = jwt.sign({ sub: user._id, username: user.username }, secret.SECRET);
     res.json({
       token
     });
   }
-  catch {
-    res.status(500).json("some error occured")
+  catch(e) {
+    res.json(e)
   }
 };
 //update user info
