@@ -69,8 +69,10 @@ exports.loginUser = async (req, res, next) => {
       token
     });
   }
-  catch(e) {
-    res.json(e)
+  catch(error) {
+    // res.json(error.message)
+    error.statusCode=301;
+    next(error);
   }
 };
 //update user info

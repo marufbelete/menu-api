@@ -62,9 +62,6 @@ if (isexist.length === 0) {
 const post=await newpost.save()
 res.json(post)
 }
- 
-
-
   else{
     return res.json("you should have an attachment")
   }
