@@ -8,7 +8,9 @@ exports.createPost=async (req, res, next) => {
     try {
         if(!!req.mimetypeError)
         {
-            res.json(req.mimetypeError)
+            const error = new Error(req.mimetypeError)
+            error.statusCode = 400
+            throw error;
         }
     const imgurl=[]
     console.log(req.body)
@@ -59,17 +61,19 @@ if (isexist.length === 0) {
     
   })
 
-const post=await newpost.save()
-res.json(post)
-}
+     const post=await newpost.save()
+     res.json(post)
+    }
   else{
-    return res.json("you should have an attachment")
+    const error = new Error("you should have an attachment")
+    error.statusCode = 400
+    throw error;
   }
     }
   
 
-  catch {
-    res.json("Error please try again")
+  catch(error) {
+    next(error)
   }
 }
 //get all post
@@ -97,36 +101,35 @@ exports.getPost = async (req, res, next) => {
         let final_condition = { $and: conditions };
 
         const catpost = await PostPost.find(final_condition).limit(pagesize).skip(skip).sort({datefield:-1})
-        if (catpost) {
 
-            res.json(catpost)
-        }
+        return res.json(catpost)
+        
     }
-    catch {
-        res.json("some error please try again")
-    }
+    catch(error) {
+        next(error)
+      }
 }
 // update post edit
 exports.updatePost = async (req, res, next) => {
     try {
         let poststat = req.query.status
-        await PostPost.findByIdAndUpdate(req.params.id, { postStatus: poststat })
-        res.json("success")
+        const updated=await PostPost.findByIdAndUpdate(req.params.id, { postStatus: poststat })
+        res.json(updated)
     }
-    catch {
-        res.json("can't update the status")
-    }
+    catch(error) {
+        next(error)
+      }
 }
 //update status
 exports.updatePostStatus = async (req, res, next) => {
     try {
         let poststat = req.query.status
         await PostPost.findByIdAndUpdate(req.params.id, { postStatus: poststat })
-        res.json("success")
+        res.json("sucessfully updated")
     }
-    catch {
-        res.json("can't update the status")
-    }
+    catch(error) {
+        next(error)
+      }
 
 }
 //delete post
@@ -134,9 +137,10 @@ exports.deletePost = async (req, res, next) => {
     try {
         const id = req.params.id
         await PostPost.findByIdAndDelete(id)
+        res.json("deleted sucessfully")
     }
-    catch {
-        res.json("can't delete the post please try again")
-    }
+    catch(error) {
+        next(error)
+      }
 
 }
