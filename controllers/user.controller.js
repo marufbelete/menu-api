@@ -48,6 +48,7 @@ exports.saveUser = async (req, res, next) => {
 //log in
 exports.loginUser = async (req, res, next) => {
   try {
+    console.log("login")
     const username=req.body.username;
     const password = req.body.password
     if (!!!username || !!!password) {
