@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const app = express();
 const userroute = require('./routes/user.route');
 const postroute = require('./routes/post.route');
-const secret=require('./config.json')
+const config=require('./config.json')
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(userroute)
@@ -16,8 +16,8 @@ mongoose.connection.on("error", err => {
 })
 mongoose.connection.on("connected", (err, res) => {
   console.log("mongoose is connected")
-  app.listen(secret.PORT, () => {
-    console.log(`app is listening to PORT ${secret.PORT}`)
+  app.listen(config.PORT, () => {
+    console.log(`app is listening to PORT ${config.PORT}`)
   })
 
 })
