@@ -1,9 +1,10 @@
 const express = require('express');
 const userauth = require("../middleware/auth.middleware")
-const { createPost,getPost,updatePostStatus,deletePost,updatePost } = require('../controllers/post.controller')
+const { createPost,getPost,closePost,renewPost,deletePost,updatePost } = require('../controllers/post.controller')
 const {createCatagory,getCatgory,updateCatagory,deleteCatagory} = require('../controllers/catagory.controller')
 const {createLocation,getLocation,updateLocation,deleteLocation,getCity,getSubcity,getVillage} = require('../controllers/location.controller')
 const {addUssdCode,getUssdCode,updateUssdCode,deleteUssdCode,}=require('../controllers/payment.controller')
+const {errorHandler} = require('../middleware/errohandling.middleware')
 const multer=require("multer");
 const router = express.Router();
 const fileStorage = multer.memoryStorage()
@@ -24,31 +25,32 @@ const filefilter = (req, file, cb) => {
 const upload=multer({ storage: fileStorage, fileFilter: filefilter })
 
 //post
-router.post('/createpost', userauth,upload.array('image',6),createPost)
-router.get('/getpost/:firstcatagory/:secondcatagory/:thiredcatgory', userauth,getPost)
-router.put('/updatepost/:id',upload.array('image',6), userauth,updatePost)
-router.put('/updatepoststatus/:id', userauth,updatePostStatus)
-router.delete('/deletepost/:id', userauth,deletePost)
+router.post('/createpost', userauth,upload.array('image',6),createPost,errorHandler)
+router.get('/getpost/:firstcatagory/:secondcatagory', userauth,getPost,errorHandler)
+router.put('/updatepost/:id',upload.array('image',6), userauth,updatePost,errorHandler)
+router.put('/updatepoststatus/:id', userauth,closePost,errorHandler)
+router.put('/updatepoststatus/:id', userauth,renewPost,errorHandler)
+router.delete('/deletepost/:id', userauth,deletePost,errorHandler)
 
 //catagory
-router.post('/createcatagory', userauth,upload.single('image'),createCatagory)
-router.get('/getcatagory', userauth,getCatgory)
-router.put('/updatecatagory/:id',upload.single('image'), userauth,updateCatagory)
-router.delete('/deletecatagory/:id', userauth,deleteCatagory)
+router.post('/createcatagory', userauth,upload.single('image'),createCatagory,errorHandler)
+router.get('/getcatagory', userauth,getCatgory,errorHandler)
+router.put('/updatecatagory/:id',upload.single('image'), userauth,updateCatagory,errorHandler)
+router.delete('/deletecatagory/:id', userauth,deleteCatagory,errorHandler)
 
 //location
-router.post('/addlocation', userauth,createLocation)
-router.get('/getlocation', userauth,getLocation)
-router.get('/getcity', userauth,getCity)
-router.get('/getsubcity', userauth,getSubcity)
-router.get('/getvillage/:city', userauth,getVillage)
-router.put('/updatelocation/:id', userauth,updateLocation)
-router.delete('/deletelocation/:id', userauth,deleteLocation)
+router.post('/addlocation', userauth,createLocation,errorHandler)
+router.get('/getlocation', userauth,getLocation,errorHandler)
+router.get('/getcity', userauth,getCity,errorHandler)
+router.get('/getsubcity', userauth,getSubcity,errorHandler)
+router.get('/getvillage/:city', userauth,getVillage,errorHandler)
+router.put('/updatelocation/:id', userauth,updateLocation,errorHandler)
+router.delete('/deletelocation/:id', userauth,deleteLocation,errorHandler)
 //ussd code
-router.post('/createussdcode', userauth,addUssdCode)
-router.get('/getussdcode', userauth,getUssdCode)
-router.put('/updateussdcode/:id', userauth,updateUssdCode)
-router.delete('/deleteussdcode/:id', userauth,deleteUssdCode)
+router.post('/createussdcode', userauth,addUssdCode,errorHandler)
+router.get('/getussdcode', userauth,getUssdCode,errorHandler)
+router.put('/updateussdcode/:id', userauth,updateUssdCode,errorHandler)
+router.delete('/deleteussdcode/:id', userauth,deleteUssdCode,errorHandler)
 
 module.exports = router
 

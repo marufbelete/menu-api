@@ -5,9 +5,9 @@ const { loginUser,updateUser } = require('../controllers/user.controller');
 const {errorHandler} = require('../middleware/errohandling.middleware')
 const router = express.Router();
 
-router.post('/register', saveUser)
+router.post('/register', saveUser,errorHandler)
 router.post('/login', loginUser,errorHandler)
-router.post('/updateuser',userauth,updateUser)
+router.post('/updateuser',userauth,updateUser,errorHandler)
 
 
 module.exports = router

@@ -17,58 +17,49 @@ const savedussd=await newussd.save()
 res.json(savedussd)
 }
 else{
-  res.json("Ussdcode already exists,you can't have more than one Ussdcode for now but you can update the value if you want")
+  const error = new Error("Ussdcode already exists,you can't have more than one Ussdcode for now but you can update the value if you want")
+  error.statusCode = 400
+  throw error;
 }
   }
-  catch {
-    res.json("Error, please try again")
-  }
+  catch(error) {
+    next(error)  
+}
 }
 //get ussdcode
 exports.getUssdCode = async (req, res, next) => {
-
   try {
-
 const ussd=await Payment.findOne()
-console.log(ussd)
 res.json(ussd)
   }
   catch{
-res.json("Error, please try again")
+next(error)
   }
 }
 //update ussdcode
 exports.updateUssdCode = async (req, res, next) => {
-
   try {
-
 const ussd=await Payment.findByIdAndUpdate(req.params.id,{
+  $set:{
   ussdCode:req.body.ussdcode,
   phoneNumber:req.body.phonenumber,
   amount:req.body.amount
-},{new:true})
-
-res.json(ussd)
-
   }
-  catch {
-
-res.json("Error, please try again")
+},{new:true})
+res.json(ussd)
+  }
+  catch(error) {
+next(error)
   }
 }
 
 //delete ussdcode
 exports.deleteUssdCode = async (req, res, next) => {
-
   try {
-
 await Payment.findByIdAndDelete(req.params.id)
-
 res.json("Deleted Successfully")
-
   }
-  catch{
-
-res.json("Error, please try again")
+  catch(error){
+next(error)
   }
 }

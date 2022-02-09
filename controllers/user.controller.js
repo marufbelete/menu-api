@@ -9,7 +9,7 @@ exports.saveUser = async (req, res, next) => {
     const username= req.body.username
     const password=req.body.password
 
-    if (!username || !password) {
+    if (!!!username || !!!password) {
       const error = new Error("Please fill all field.")
       error.statusCode = 400
       throw error;
@@ -50,7 +50,7 @@ exports.loginUser = async (req, res, next) => {
   try {
     const username=req.body.username;
     const password = req.body.password
-    if (!username || !password) {
+    if (!!!username || !!!password) {
       return res.status(400).json("Please fill all field.")
     }
     const user = await User.findOne({
@@ -95,7 +95,7 @@ if(!!password)
       error.statusCode = 400
       throw error;
     }
-    if (password != confirm_password) {
+    if (password !== confirm_password) {
       const error = new Error("password doesn't match. please try again.")
       error.statusCode = 400
       throw error;

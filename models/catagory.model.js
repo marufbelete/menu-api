@@ -8,18 +8,15 @@ const CatagorySchema = new mongoose.Schema({
     enum : ['sale','rent'], 
     lowercase:true,
     required: true,
+    unique:[true,"the catagory must be unique"]
   },
   secondCatagoryType: {
     type: String,
     trim: true,
     required: true,
     lowercase: true,
+    unique:[true,"the catagory must be unique"]
   },
-    thiredCatagoryType: {
-    type: Array,
-    required: true,
-    lowercase: true,
-    },
   secondCatagoryImage: {
      type: String,
      required: true,

@@ -18,15 +18,17 @@ exports.createLocation=async (req, res, next) => {
             })
 
            const newlocation= await location.save()
-           res.json(newlocation)
+           return res.json(newlocation)
         }
         else {
-            res.json("This location already exist")
+            const error = new Error("This location already exist")
+            error.statusCode = 400
+            throw error;
         }
     }
 
-  catch {
-        res.json("Error please try again")
+  catch(error) {
+       next(error)
   }
 }
 
@@ -37,8 +39,8 @@ exports.getLocation=async(req,res,next)=>{
       res.json(location)
     
   }
-  catch{
-      res.json("Error please try again")
+  catch(error){
+     next(error)
   }
 
 }
@@ -49,22 +51,20 @@ exports.getCity=async(req,res,next)=>{
         res.json(location)
       
     }
-    catch{
-        res.json("Error please try again")
+    catch(error){
+  next(error)
     }
-  
   }
   //get subcity
 exports.getSubcity=async(req,res,next)=>{
     try{
-        const location = await LocationPost.find({city:"addis ababa"}).select("subCity").distinct("subCity")
+        const location = await LocationPost.find({city:"addis ababa"},{subCity:1,}).distinct("subCity")
         res.json(location)
       
     }
-    catch{
-        res.json("Error please try again")
-    }
-  
+    catch(error){
+        next(error)
+          }
   }
 //get village
 exports.getVillage=async(req,res,next)=>{
@@ -83,10 +83,9 @@ exports.getVillage=async(req,res,next)=>{
         res.json(location)
       
     }
-    catch{
-        res.json("Error please try again")
-    }
-  
+    catch(error){
+        next(error)
+          }
   }
 //update location info
 exports.updateLocation=async(req,res,next)=>{
@@ -98,14 +97,12 @@ exports.updateLocation=async(req,res,next)=>{
                 village: req.body.village
             }
             })
-        res.json(location)
-      
+        res.json(location) 
     }
-    catch{
-        res.json("Error please try again")
-    }
-  
-  }
+    catch(error){
+        next(error)
+          }
+         }
 
 // for admin delete
 exports.deleteLocation = async (req, res, next) => {
@@ -114,7 +111,7 @@ exports.deleteLocation = async (req, res, next) => {
         res.json("deleted succssfully")
 
     }
-    catch {
-        res.json("Error please try again")
+    catch(error) {
+        next(error)
     }
 }

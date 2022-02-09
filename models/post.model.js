@@ -55,12 +55,6 @@ const PostSchema = new mongoose.Schema({
         required: true,
         lowercase: true,
     },
-    thiredCatagoryType: {
-        type: String,
-        trim: true,
-        required: true,
-        lowercase: true,
-    },
  
 },
   {
