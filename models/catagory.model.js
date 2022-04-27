@@ -1,26 +1,19 @@
 const mongoose = require("mongoose");
 
 const CatagorySchema = new mongoose.Schema({
-//sale or rent
-  firstCatagoryType: {
+  Catagory: {
     type: String,
     trim: true,
-    enum : ['sale','rent'], 
     lowercase:true,
     required: true,
     unique:[true,"the catagory must be unique"]
   },
-  secondCatagoryType: {
+  CatagoryImage:{
     type: String,
     trim: true,
+    lowercase:true,
     required: true,
-    lowercase: true,
-    unique:[true,"the catagory must be unique"]
-  },
-  secondCatagoryImage: {
-     type: String,
-     required: true,
-    }
+  }
 },
     {
         timestamps: true,

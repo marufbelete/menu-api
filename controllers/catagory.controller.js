@@ -4,8 +4,7 @@ const fs=require("fs");
 // for admin
 exports.createCatagory=async (req, res, next) => {
     try {
-        const first_catagory=req.body.firstcatagory
-        const second_catagory=req.body.secondcatagory
+        const catagory=req.body.catagory
         if(!!req.mimetypeError)
         {
             return res.json(req.mimetypeError)
@@ -45,10 +44,8 @@ exports.createCatagory=async (req, res, next) => {
 //for all
 exports.getCatgory = async (req, res, next) => {
     try {
-
-        const rent = await CatagoryPost.find({firstCatagoryType:"rent"},{secondCatagoryType:1,secondCatagoryImage:1, createdAt:1, updatedAt:1})
-        const sale = await CatagoryPost.find({firstCatagoryType:"sale"},{secondCatagoryType:1,secondCatagoryImage:1, createdAt:1, updatedAt:1})
-        res.json({rent,sale})
+        const all_catagory = await CatagoryPost.find()
+        res.json(all_catagory)
     }
     catch(error) {
        next(error)
@@ -80,9 +77,8 @@ exports.updateCatagory = async (req, res,next)=> {
             // save non exsting catagory
             const catagory = await CatagoryPost.findByIdAndUpdate(req.params.id, {
                 $set: {
-                    firstCatagoryType: req.body.firstcatagory,
-                    secondCatagoryType: req.body.secondcatagory,
-                    secondCatagoryImage: path
+                Catagory: req.body.catagory,
+                CatagoryImage:path
                 }
                 }, {useFindAndModify: false,new:true})
     
@@ -92,8 +88,7 @@ exports.updateCatagory = async (req, res,next)=> {
         { 
             const catagory = await CatagoryPost.findByIdAndUpdate(req.params.id, {
                 $set: {
-                    firstCatagoryType: req.body.firstcatagory,
-                    secondCatagoryType: req.body.secondcatagory,
+                    Catagory: req.body.catagory,
                 }
                 }, {useFindAndModify: false,new:true})
     

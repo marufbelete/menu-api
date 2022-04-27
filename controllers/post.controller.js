@@ -1,11 +1,10 @@
 const PostPost = require("../models/post.model");
-const LocationPost = require("../models/location.model");
-
 const sharp=require("sharp")
 const fs=require("fs");
 //for more than one file req.file will be chnaged in to req.files
 exports.createPost=async (req, res, next) => {
     try {
+      console.log("post")
         if(!!req.mimetypeError)
         {
             const error = new Error(req.mimetypeError)
@@ -15,47 +14,28 @@ exports.createPost=async (req, res, next) => {
     const imgurl=[]
     if (req.files.length > 0)
     {
-        if (!fs.existsSync("../images")){
-            fs.mkdirSync("../images");
+        if (!fs.existsSync("./images")){
+            fs.mkdirSync("./images");
         }
 console.log(req.files.length)
   for(let f=0;f<req.files.length;f++)
   {
-    console.log(req.files[f])
-    const imagetype=(req.files[f].mimetype).split("/")[1]
-    const path=req.files[f].originalname
+    const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const imagetype=(req.files[f].mimetype).split("/")[1];
+    const path=req.files[f].originalname;
+    const fullpath=uniquePrefix+'-'+path;
            sharp(req.files[f].buffer)
-          .resize({ width:200, fit: 'contain', })
+          .resize({ width:600, fit: 'contain', })
     .toFormat(imagetype)
-    .toFile(`./images/${path}`);
-    imgurl.push(path)
+    .toFile(`./images/${fullpath}`);
+    imgurl.push(fullpath)
  }
 
- const isexist = await LocationPost.find({
-    city: req.body.city,
-    subCity: req.body.subcity,
-    village: req.body.village
-})
-if (isexist.length === 0) {
-    // save non exsting location
-    const location = new LocationPost({
-        city: req.body.city,
-        subCity: req.body.subcity,
-        village: req.body.village
-    })
-  await location.save()
-
-}
  const newpost = new PostPost({
-    firstCatagoryType: req.body.firstcat,
-    secondCatagoryType: req.body.secondcat,
-    price:req.body.price,
-    description:req.body.description,
-    imageUrl:imgurl,
-    brandName:req.body.brandname,
-    city:req.body.city,
-    subCity:req.body.subcity,
-    village:req.body.village,
+    Catagory: req.body.catagory,
+    Price:req.body.price,
+    Description:req.body.description,
+    ImageUrl:imgurl,
     
   })
      const post=await newpost.save()
@@ -74,28 +54,9 @@ if (isexist.length === 0) {
 //get all post
 exports.getPost = async (req, res, next) => {
     try {
-
-        let page = !!req.query.pageno ? req.query.pageno : 0
-        let pagesize = 10
-        let skip = pagesize * page
-
-        let conditions = [{firstCatagoryType:req.params.firstcatagory,secondCatagoryType:req.params.secondcatagory}];
-        let location = !!req.query.location ? req.query.location : "addis ababa";
-        let price = !!req.query.price ? req.query.price : !!req.query.price;
-        let brandname = !!req.query.brandname ? req.query.brandname : !!req.query.brandname;
-
-        if (location) {
-            conditions.push({ $or: [{ village: location }, { city: location }] });
-        }
-        if (price) {
-            conditions.push({ price: { $lte: price } });
-        }
-        if (brandname) {
-            conditions.push({ brandName: brandname });
-        }
-        let final_condition = { $and: conditions };
-
-        const catpost = await PostPost.find(final_condition).limit(pagesize).skip(skip).sort({"updated_At":-1})
+      const filter={}
+        let catagory = !!req.query.catagory ? filter.Catagory=req.query.catagory:filter ;
+        const catpost = await PostPost.find(filter).sort({"updated_At":-1})
         return res.json(catpost)
     }
     catch(error) {
@@ -120,41 +81,23 @@ exports.updatePost = async (req, res, next) => {
         }
   for(let f=0;f<req.files.length;f++)
   {
-    console.log(req.files[f])
-    const imagetype=(req.files[f].mimetype).split("/")[1]
-    const path=req.files[f].originalname
+    const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const imagetype=(req.files[f].mimetype).split("/")[1];
+    const path=req.files[f].originalname;
+    const fullpath=uniquePrefix+'-'+path;
            sharp(req.files[f].buffer)
-          .resize({ width:200, fit: 'contain', })
+          .resize({ width:600, fit: 'contain', })
     .toFormat(imagetype)
-    .toFile(`./images/${path}`);
-    imgurl.push(path)
+    .toFile(`./images/${fullpath}`);
+    imgurl.push(fullpath)
  }
 
- const isexist = await LocationPost.find({
-    city: req.body.city,
-    subCity: req.body.subcity,
-    village: req.body.village
-})
-if (isexist.length === 0) {
-    // save non exsting location
-    const location = new LocationPost({
-        city: req.body.city,
-        subCity: req.body.subcity,
-        village: req.body.village
-})
-  await location.save()
-}
 const updated=await PostPost.findByIdAndUpdate(id, 
   {$set:{ 
-    firstCatagoryType: req.body.firstcat,
-    secondCatagoryType: req.body.secondcat,
-    price:req.body.price,
-    description:req.body.description,
-    imageUrl:imgurl,
-    brandName:req.body.brandname,
-    city:req.body.city,
-    subCity:req.body.subcity,
-    village:req.body.village,
+    Catagory: req.body.catagory,
+    Price:req.body.price,
+    Description:req.body.description,
+    ImageUrl:imgurl,
   }
 },{new:true})
    return res.json(updated)
@@ -163,14 +106,9 @@ else
 {
   const updated=await PostPost.findByIdAndUpdate(id, 
     {$set:{ 
-      firstCatagoryType: req.body.firstcat,
-      secondCatagoryType: req.body.secondcat,
-      price:req.body.price,
-      description:req.body.description,
-      brandName:req.body.brandname,
-      city:req.body.city,
-      subCity:req.body.subcity,
-      village:req.body.village,
+      Catagory: req.body.catagory,
+      Price:req.body.price,
+      Description:req.body.description,
     }
   })
   res.json(updated)
@@ -183,23 +121,14 @@ else
 //update status
 exports.closePost = async (req, res, next) => {
     try {
-        await PostPost.findByIdAndUpdate(req.params.id, {$set:{ isActive: false }})
+        await PostPost.findByIdAndUpdate(req.params.id, {$set:{ IsActive: false }})
         res.json("sucessfully updated")
     }
     catch(error) {
         next(error)    
     }
 }
-//
-exports.renewPost = async (req, res, next) => {
-  try {
-      await PostPost.findByIdAndUpdate(req.params.id, {$set:{ isActive:true}})
-      res.json("sucessfully updated")
-  }
-  catch(error) {
-      next(error)    
-  }
-}
+
 //delete post
 exports.deletePost = async (req, res, next) => {
     try {

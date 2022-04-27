@@ -1,15 +1,11 @@
 const jwt = require("jsonwebtoken");
 
-const config = process.env;
-
 const authenticateJWT = (req, res, next) => {
-  console.log(req.headers)
-  const authHeader = req.headers.authorization;
-
-  if (authHeader) {
-    const token = authHeader.split(' ')[1];
-    // const token = authHeader
-    jwt.verify(token, "marufsecret", (err, user) => {
+  console.log(req)
+  const token = req.signedCookies.token;
+  console.log(token)
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         return res.status(403).send({ msg: "something wrong" });
       }
@@ -20,7 +16,7 @@ const authenticateJWT = (req, res, next) => {
     });
   }
   else {
-    res.status(401).send({ message: "no token exist" });
+    res.status(401).send({ message: "you have no privilage" });
   }
 
 };
